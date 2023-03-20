@@ -15,5 +15,6 @@ df = pd.read_csv(file_path)
 # Here I am using the parser module to add a column to my dataframe that is just the month
 # I'm applying a lambda function using this module to each value in the date column and writing result that to the month column
 df['Month'] = df['Date']. apply(lambda x: parse(x).month)
-
-print(df)
+#print(df)
+monthCount = df['Month'].nunique()
+print(monthCount)
