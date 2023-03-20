@@ -6,11 +6,11 @@ import os
 from dateutil.parser import parse
 
 # First I get the path to the project directory
-project_dir = os.path.dirname(os.path.abspath(__file__))
+projectDir = os.path.dirname(os.path.abspath(__file__))
 # Then I create the file path relative to the project directory
-file_path = os.path.join(project_dir, "Resources", "budget_data.csv")
+filePath = os.path.join(projectDir, "Resources", "budget_data.csv")
 # Now I read the CSV file into a DataFrame
-df = pd.read_csv(file_path)
+df = pd.read_csv(filePath)
 
 #print(df.__len__())
 
@@ -76,3 +76,4 @@ myText = open('results.txt', 'w')
 myText.write(myOutput)
 myText.close()
 
+# Updates will be to clean all this up, remove the year and month parsing (tho save that for later because I learned something) and clean up the code comments.
