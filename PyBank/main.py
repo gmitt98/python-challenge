@@ -1,4 +1,5 @@
-#This is the code for our solution
+# This is the code for our solution
+# I am moderately familiar with pandas dataframes
 
 import pandas as pd
 import os
@@ -37,7 +38,18 @@ print(profitDiff)
 avgChange = profitDiff.mean()
 print(avgChange)
 maxIncrease = profitDiff.max()
+maxIncreaseIndex = profitDiff.idxmax()
 minIncrease = profitDiff.min()
+minIncreaseIndex = profitDiff.idxmin()
 
+# OK now I will need to find the index at which these occur and then read the date at that index
 print(maxIncrease)
+print(maxIncreaseIndex)
 print(minIncrease)
+print(minIncreaseIndex)
+
+maxIncreaseDate = df.loc[maxIncreaseIndex, 'Date']
+minIncreaseDate = df.loc[minIncreaseIndex, 'Date']
+print(maxIncreaseDate)
+print(minIncreaseDate)
+# All of thise seems to work per the instructions
