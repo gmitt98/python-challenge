@@ -11,41 +11,58 @@ file_path = os.path.join(project_dir, "Resources", "election_data.csv")
 # Now I read the CSV file into a DataFrame
 df = pd.read_csv(file_path)
 
-print(df.head)
+#print(df.head)
 
 totalVotes = len(df)
-print(totalVotes)
+#print(totalVotes)
 
 uniqueValues = df.nunique()
-print(uniqueValues)
+#print(uniqueValues)
 
 candidateList = df['Candidate'].unique()
-print(candidateList)
+#print(candidateList)
 
 resultsDict = {}
 
 for i in candidateList:
-    print(i)
+    #print(i)
     votes = len(df[df["Candidate"]==i])
-    print(votes)
+    #print(votes)
     voteShare = votes/totalVotes
-    print(voteShare)
+    #print(voteShare)
     resultsDict[i] = (votes, voteShare)
 
-print(resultsDict)
+#print(resultsDict)
 
-#myOutput ="""Election Results
-#-------------------------
-#Total Votes: {}
-#-------------------------
-#{}: {}}% ({}})
-#{}: {}% ({})
-#{}: {}% ({})
-#-------------------------
-#Winner: {}
-#-------------------------""".format()
-#print(myOutput)
+#maxVote = max(resultsDict.values())
+#print(maxVote)
+winner = max(resultsDict, key=resultsDict.get)
 
-#myText = open('results.txt', 'w')
-#myText.write(myOutput)
-#myText.close()
+
+firstOutput = """Election Results
+-------------------------
+Total Votes: {}
+-------------------------
+""".format(totalVotes)
+print(firstOutput)
+
+secondOutput = ""
+for i,j in resultsDict.items():
+    percentResult= round(j[1]*100,3)
+    s = str(i) + " " + str(percentResult) + "% " + "(" + str(j[0]) + ")"
+    #print(s)
+    #print("")
+    secondOutput = secondOutput + s + "\n"
+print(secondOutput)
+
+thirdOutput = """-------------------------
+Winner: {}
+-------------------------""".format(winner)
+
+print(thirdOutput)
+
+myText = open('results.txt', 'w')
+myText.write(firstOutput)
+myText.write(secondOutput)
+myText.write(thirdOutput)
+myText.close()
