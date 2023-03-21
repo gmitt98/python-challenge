@@ -16,7 +16,6 @@ with open(filePath) as myFile:
     # Grab the first and second rows of data
     firstRow = next(bankData)
     secondRow = next(bankData)
-    print(secondRow)
     # Initialize the values I'm going to use
     # I will need to track two rows at a time in order to calc averages so I run these manually on 2 rows then do a for loop
     totMonths = 2 # Since this first part processes the first two months, we initialize with this result
