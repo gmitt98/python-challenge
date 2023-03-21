@@ -1,32 +1,39 @@
 # This is the solution for our code
-# I a moderately familiar with pandas and dataframes
 
-import pandas as pd
 import os
+import csv
 
 # First I get the path to the project directory
 projectDir = os.path.dirname(os.path.abspath(__file__))
 # Then I create the file path relative to the project directory
 filePath = os.path.join(projectDir, "Resources", "election_data.csv")
-# Now I read the csv file into a dataframe
-df = pd.read_csv(filePath)
 
-# Total votes is the number of rows in the file (we could verify that there are no duplicates by comparing length to unique values, but we weren't asked to do that)
-totalVotes = len(df)
-# Get a lit of the candidates - this is the unique values in the candidate column
-candidateList = df['Candidate'].unique()
-
-# Put the election results in a dictionary. The key is the candidate, the values are their results
 resultsDict = {}
-for i in candidateList:
-    votes = len(df[df["Candidate"]==i])
-    voteShare = votes/totalVotes
-    resultsDict[i] = (votes, voteShare)
+totalVotes = 0
+with open(filePath) as myFile:
+    electionData=csv.reader(myFile)
+    next(electionData) # Jumping past the headers
+    for row in electionData:
+        totalVotes = totalVotes + 1 # Count the ballot in the total
+        cName = row[2] # Grab the candidate name for that ballot
+        if cName not in resultsDict: # See if the candidate is in the results dictionary as a key, if not then create it with zero votes
+            resultsDict[cName] = {"votes": 0, "voteShare": 0}
+        resultsDict[cName]["votes"] = resultsDict[cName]["votes"] + 1 # Count the ballot for the candidate in the results dictionary
+# Add the percentage vote share to the results dictionary
+for i in resultsDict:
+    resultsDict[i]["voteShare"] = resultsDict[i]["votes"]/totalVotes
+# Now we have the results in a dictionary that goes {'candidate name': #-ballots, ... etc}
 
-# Find the key associated with the highest (aka 'max') result in the values
-winner = max(resultsDict, key=resultsDict.get)
+# Find the key associated with the highest result in the values by looping through the dictionary
+# Using the same technique as I used in PyBank to hold on to the highest value found
+winner = ""
+winnerVotes = 0
+for i in resultsDict:
+    if resultsDict[i]["votes"] > winnerVotes:
+        winnerVotes = resultsDict[i]["votes"]
+        winner = i
 
-# I broke my output into three sections because I run a for loop in the second ond.
+# I broke my output into three sections because I run a for loop in the second one.
 # First section outputs the total votes, with the formatting indicated in the assignment
 firstOutput = """Election Results
 -------------------------
@@ -34,11 +41,11 @@ Total Votes: {}
 -------------------------
 """.format(totalVotes)
 
-# Second output section does a for loop on the candidates dictionary, and generates a string that has their result with the formatting requested
+# Second output section does a for loop on the results dictionary, and generates a string that has their result with the formatting requested
 secondOutput = ""
-for i,j in resultsDict.items():
-    percentResult= round(j[1]*100,3)
-    s = str(i) + " " + str(percentResult) + "% " + "(" + str(j[0]) + ")"
+for i in resultsDict:
+    percentResult= round(resultsDict[i]["voteShare"]*100,3)
+    s = str(i) + " " + str(percentResult) + "% " + "(" + str(resultsDict[i]["votes"]) + ")"
     secondOutput = secondOutput + s + "\n"
 
 # Third section outpouts the winner
