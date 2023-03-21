@@ -1,6 +1,5 @@
 # This is the code for our solution
 
-#import pandas as pd
 import os
 import csv
 
