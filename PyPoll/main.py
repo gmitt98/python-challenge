@@ -1,5 +1,5 @@
 # This is the solution for our code
-# I am re-using some of my code from the PyBank project, specifically reading the file and writing the output
+# I a moderately familiar with pandas and dataframes
 
 import pandas as pd
 import os
@@ -8,62 +8,54 @@ import os
 projectDir = os.path.dirname(os.path.abspath(__file__))
 # Then I create the file path relative to the project directory
 filePath = os.path.join(projectDir, "Resources", "election_data.csv")
-# Now I read the CSV file into a DataFrame
+# Now I read the csv file into a dataframe
 df = pd.read_csv(filePath)
 
-#print(df.head)
-
+# Total votes is the number of rows in the file (we could verify that there are no duplicates by comparing length to unique values, but we weren't asked to do that)
 totalVotes = len(df)
-#print(totalVotes)
-
-uniqueValues = df.nunique()
-#print(uniqueValues)
-
+# Get a lit of the candidates - this is the unique values in the candidate column
 candidateList = df['Candidate'].unique()
-#print(candidateList)
 
+# Put the election results in a dictionary. The key is the candidate, the values are their results
 resultsDict = {}
-
 for i in candidateList:
-    #print(i)
     votes = len(df[df["Candidate"]==i])
-    #print(votes)
     voteShare = votes/totalVotes
-    #print(voteShare)
     resultsDict[i] = (votes, voteShare)
 
-#print(resultsDict)
-
-#maxVote = max(resultsDict.values())
-#print(maxVote)
+# Find the key associated with the highest (aka 'max') result in the values
 winner = max(resultsDict, key=resultsDict.get)
 
-
+# I broke my output into three sections because I run a for loop in the second ond.
+# First section outputs the total votes, with the formatting indicated in the assignment
 firstOutput = """Election Results
 -------------------------
 Total Votes: {}
 -------------------------
 """.format(totalVotes)
-print(firstOutput)
 
+# Second output section does a for loop on the candidates dictionary, and generates a string that has their result with the formatting requested
 secondOutput = ""
 for i,j in resultsDict.items():
     percentResult= round(j[1]*100,3)
     s = str(i) + " " + str(percentResult) + "% " + "(" + str(j[0]) + ")"
-    #print(s)
-    #print("")
     secondOutput = secondOutput + s + "\n"
-print(secondOutput)
 
+# Third section outpouts the winner
 thirdOutput = """-------------------------
 Winner: {}
 -------------------------""".format(winner)
 
+# Print the results
+print(firstOutput)
+print(secondOutput)
 print(thirdOutput)
 
-# for some odd reason this was saving my output to desktop instead of to project directory, so i am confirming that we are in the correct directory now
-os.chdir(projectDir)
+# Create the file path to the analysis directory and changing directory to write our results there
+outputDir = projectDir + '/Analysis'
+os.chdir(outputDir)
 
+# Write the outputs to the text file, all outputs in a single file
 myText = open('results.txt', 'w')
 myText.write(firstOutput)
 myText.write(secondOutput)

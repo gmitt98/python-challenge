@@ -12,56 +12,30 @@ filePath = os.path.join(projectDir, "Resources", "budget_data.csv")
 # Now I read the CSV file into a DataFrame
 df = pd.read_csv(filePath)
 
-#print(df.__len__())
-
-# These date formats did not play nice with regex to read the month value, so I went and found another solution using a new library
-# Here I am using the parser module to add a column to my dataframe that is just the month
-# I'm applying an anonymous lambda function (go python!), using this module, to each value in the date column and writing result that to the month column
-df['Month'] = df['Date']. apply(lambda x: parse(x).month)
-df['Year'] = df['Date'].apply(lambda x: parse(x).year)
-print(df)
-# Now I can read the number of unique months in the file
-monthCount = df['Month'].nunique()
-print(monthCount) #prints '12', yay
-yearCount = df['Year'].nunique()
-monthCountTotal = df['Date'].nunique()
-print(monthCountTotal)
-print(yearCount)
-# Clean up these comments, but... inspecting this data we see that there are only 2023 dates here
-# So there are only 12 months! But the instructions show results that have 86, so... I guess we go with that?
-# Ooooh wait a second I see what is going on here. Excel is rendering weird. I have "1/10/2023" in the input box
-# But it reads like "10-Jan" in the cell. So 10 is the year, Jan is the month. That explains this order better.
-# Just total number of months with this new learning:
+# From inspecting the dataframe earlier, we see that it contains one month entry per row, in chrolologically increasing order
+# The total number of months is the total number of rows in the dataframe
 totMonths = len(df)
-print(totMonths)
 
+# Get the sum of all profits and losses with the sum method
 totalSum = df['Profit/Losses'].sum()
-print(totalSum)
 
+# Get the difference between rows with the diff method - this gives us a dataframe to run the next stats on
 profitDiff = df['Profit/Losses'].diff()
-print(profitDiff)
+
+# Get the average of the differences
 avgChange = profitDiff.mean()
-print(avgChange)
+
+# Get the max and min changes by month, as well as the index (row number) where those occurs, so we can read the month where they occur
 maxIncrease = profitDiff.max()
 maxIncreaseIndex = profitDiff.idxmax()
 minIncrease = profitDiff.min()
 minIncreaseIndex = profitDiff.idxmin()
 
-# OK now I will need to find the index at which these occur and then read the date at that index
-print(maxIncrease)
-print(maxIncreaseIndex)
-print(minIncrease)
-print(minIncreaseIndex)
-
+# Get the date that goes along with the min and max differences - by reading the data column at the index we just found above
 maxIncreaseDate = df.loc[maxIncreaseIndex, 'Date']
 minIncreaseDate = df.loc[minIncreaseIndex, 'Date']
-print(maxIncreaseDate)
-print(minIncreaseDate)
-# All of thise seems to work per the instructions
-# Of course I should probably check and see if I'm supposed to be using pandas at this point or not
 
-# Just need to write all this to a text file now. Something like this, using f-strings that I just found out about:
-
+# Create the output string we are going to print and save to text. This string needs to take the calculated variables from above
 myOutput = """Financial Analysis
 ----------------------------
 Total Months: {}
@@ -70,10 +44,15 @@ Average Change: ${:,.2f}
 Greatest Increase in Profits: {} (${:,.0f})
 Greatest Decrease in Profits: {} (${:,.0f})
 """.format(totMonths,totalSum,avgChange,maxIncreaseDate,maxIncrease,minIncreaseDate,minIncrease)
+
+# Print the results
 print(myOutput)
 
+# Create the file path to the analysis directory and changing directory to write our results there
+outputDir = projectDir + '/Analysis'
+os.chdir(outputDir)
+
+# Write the outpout to the text file
 myText = open('results.txt', 'w')
 myText.write(myOutput)
 myText.close()
-
-# Updates will be to clean all this up, remove the year and month parsing (tho save that for later because I learned something) and clean up the code comments.
